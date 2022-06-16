@@ -1,78 +1,60 @@
 #include "monty.h"
-#include "lists.h"
+
 
 data_t data = DATA_INIT;
 
 /**
- * monty - function which helps the main function
+ * main - this opens the monty file and reads lines
  *
- * @args: points to a struct of arguments from main
+ * @argc: the number of arguments
  *
- * Description: the monty function opens and reads file
- * which contains opcodes. It then calls the func. that
- * will find corresponding executing function.
- */
-
-void monty(args_t *args)
-{
-	size_t len = 0;
-	int get = 0;
-	void (*code_func)(stack_t **, unsigned int);
-
-	if (args->ac != 2)
-	{
-		dprintf(STDERR_FILENO, USAGE);
-		exit(EXIT_FAILURE);
-	}
-	data.fptr = fopen(args->av, "r");
-	if (!data.fptr)
-	{
-		dprintf(STDERR_FILENO, FILE_ERROR, args->av);
-		exit(EXIT_FAILURE);
-	}
-	while (1)
-	{
-		args->line_number++;
-		get = getline(&(data.line), &len, data.fptr);
-		if (get < 0)
-			break;
-		data.words = strtow(data.line);
-		if (data.words[0] == NULL || data.words[0][0] == '#')
-		{
-			free_all(0);
-			continue;
-		}
-		code_func = get_func(data.words);
-		if (!code_func)
-		{
-			dprintf(STDERR_FILENO, UNKNOWN, args->line_number, data.words[0]);
-			free_all(1);
-			exit(EXIT_FAILURE);
-		}
-		code_func(&(data.stack), args->line_number);
-		free_all(0);
-	}
-	free_all(1);
-}
-
-
-/**
- * main - entry point for monty bytecode interpreter
- * @argc: number of arguments
- * @argv: array of arguments
+ * @argv: the array of arguments
  *
- * Return: EXIT_SUCCESS or EXIT_FAILURE
+ * Return: 0 success, 1 failure
  */
 
 int main(int argc, char *argv[])
 {
-	args_t args;
+	FILE *fp;
+	ssize_t bytes_read;
+	size_t len = 0;
+	char *line = NULL;
+	char *token = NULL;
+	int line_number = 0;
+	stack_t *head = NULL;
 
-	args.av = argv[1];
-	args.ac = argc;
-	args.line_number = 0;
-
-	monty(&args);
-
-	return (EXIT_SUCCESS);
+	if (argc != 2)
+	{
+		printf("USAGE: monty file\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	else
+	{
+		fp = fopen(argv[1], "r");
+		
+		if (fp == NULL)
+		{
+			printf("Error: Can't open file %s\n", argv[1]);
+			exit(EXIT_FAILURE);
+		}
+		
+		else
+		{
+			while ((bytes_read = getline(&line, &len, fp)) != -1)
+			{
+				line_number++;
+				token = get_tokens(line, line_number);
+				if (token != NULL)
+					get_func(token, &head, line_number);
+			}
+			
+			free(line);
+			
+			free_stack(head);
+			
+			fclose(fp);
+		}
+	}
+	return (0);
 }
