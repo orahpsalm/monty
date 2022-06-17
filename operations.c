@@ -15,14 +15,14 @@ void push_func(stack_t **stack, unsigned int line_number)
 
 	(void) line_number;
 	new = malloc(sizeof(stack_t));
-	
-  if (new == NULL)
+
+	if (new == NULL)
 	{
 		printf("Error: malloc failed\n");
 		exit(EXIT_FAILURE);
 	}
-	
-  new->n = global_var;
+
+	new->n = global_var;
 	new->prev = NULL;
 
 	if (*stack == NULL)
@@ -30,7 +30,7 @@ void push_func(stack_t **stack, unsigned int line_number)
 		new->next = NULL;
 		*stack = new;
 
-    return;
+	return;
 	}
 	new->next = *stack;
 	(*stack)->prev = new;

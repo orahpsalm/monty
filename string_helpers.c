@@ -23,13 +23,13 @@ int is_number(char *s)
 		{
 			i++;
 		}
-		
+
 		else
 		{
 			return (0);
 		}
 	}
-	
+
 	return (1);
 }
 

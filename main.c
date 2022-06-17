@@ -28,17 +28,17 @@ int main(int argc, char *argv[])
 		printf("USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	else
 	{
 		fp = fopen(argv[1], "r");
-		
+
 		if (fp == NULL)
 		{
 			printf("Error: Can't open file %s\n", argv[1]);
 			exit(EXIT_FAILURE);
 		}
-		
+
 		else
 		{
 			while ((bytes_read = getline(&line, &len, fp)) != -1)
@@ -48,11 +48,9 @@ int main(int argc, char *argv[])
 				if (token != NULL)
 					get_func(token, &head, line_number);
 			}
-			
+
 			free(line);
-			
 			free_stack(head);
-			
 			fclose(fp);
 		}
 	}
