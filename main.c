@@ -1,7 +1,7 @@
 #include "monty.h"
 
 
-data_t data = DATA_INIT;
+
 
 /**
  * main - this opens the monty file and reads lines
